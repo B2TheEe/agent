@@ -12,6 +12,13 @@ async def main():
       result = await Runner.run(nutrition_agent, "How healthy are bananas?")
 
     print(result)
+    response_stream = Runner.run_streamed(nutrition_agent, "How healthy are bananas?")
+
+    async for event in response_stream.stream_events():
+        if event.type == "raw_response_event" and isinstance(
+                event.data, ResponseTextDeltaEvent
+        ):
+            print(event.data.delta, end="", flush=True)
 
 
 if __name__ == "__main__":
