@@ -41,25 +41,24 @@ def get_cve(product: str) -> str:
     x = requests.get(r)
     z = x.json()
     print(z)
+    return z
 
 
 async def main():
  cve_agent = Agent(name="CVE Agent",
-                   instructions="You will provide information about vulnerabilities from a specific product,  Your result is information about CVE's from the NVD. ",
-                   tools= {get_cpe, get_cve})
+                   instructions="""You will provide information about vulnerabilities from a specific product,  Your result is information about CVE's from the NVD. "
+                                "Instructions:
+1) First find the cpe of the product asked by the user using get_cpe. Print the result of the cpe."
+2) Using the cpe you use find_cve to find vulnerabilities . Print this result as well """,
+                   tools = [get_cpe,get_cve])
  with trace("Simple CVE agent"):
      result = await Runner.run(cve_agent, "Find all the vulnerabilities from Ubuntu Linux 24.04 LTS Edition")
 
      print(result)
 
 if __name__ == "__main__":
-    """ 
-   cpe = get_cpe("Ubuntu Linux 24.04 LTS Edition")
-   get_cve(cpe)
-"""
 
     asyncio.run(main())
-
-    """ 
+""" 
     This product uses the NVD API but is not endorsed or certified by the NVD."
     """
